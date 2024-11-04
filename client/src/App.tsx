@@ -12,6 +12,10 @@ import Profile from './components/Profile'
 import SearchPage from './components/SearchPage'
 import RestaurantDetail from './components/RestaurantDetail'
 import Cart from './components/Cart'
+import Restaurant from './admin/Restaurant'
+import AddMenu from './admin/AddMenu'
+import EditMenu from './admin/EditMenu'
+
 
 const appRouter=createBrowserRouter([ 
   {
@@ -37,6 +41,19 @@ const appRouter=createBrowserRouter([
       {
         path:'/cart',
         element:<Cart/>
+      },
+      //admin service starts from here
+      {
+        path:'/admin/restaurant',
+        element:<Restaurant/>
+      },
+      {
+        path:'/admin/menu',
+        element:<AddMenu/>
+      },
+      {
+        path:'/admin/editmenu',
+        element:<EditMenu />
       },
 
     ]
