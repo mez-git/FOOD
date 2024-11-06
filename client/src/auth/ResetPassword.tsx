@@ -1,16 +1,42 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useUserStore } from "@/store/useUserStore";
 import { Loader2, LockKeyholeIcon } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-
+import {  useNavigate,useParams } from "react-router-dom";
+import { toast } from "sonner";
 const ResetPassword = () => {
     const [newPassword, setNewPassword] = useState<string>("");
-    const loading =  false;
+    const { resetToken } = useParams();  
+    console.log("Reset token from URL:", resetToken);
 
+    const {loading,resetPassword}=useUserStore()
+    const navigate=useNavigate()
+        const submitHandler = async (e: any) => {
+          e.preventDefault()
+          if (!resetToken) {
+            toast.error("yaarrr.");
+            return;
+        }
+         
+                // Log before calling signup API
+                console.log("Calling login API with input:",newPassword);
+        
+                
+                // Login API implementation start here
+                try {
+                  await resetPassword(resetToken,newPassword);
+                  console.log("password reset successfull!");
+                  setNewPassword("");
+                  navigate('/login')
+              } catch (error) {
+                  console.log(" error:", error);
+              }
+              
+        }
   return (
     <div className="flex items-center justify-center min-h-screen w-full">
-      <form className="flex flex-col gap-5 md:p-8 w-full max-w-md rounded-lg mx-4">
+      <form onSubmit={submitHandler} className="flex flex-col gap-5 md:p-8 w-full max-w-md rounded-lg mx-4">
         <div className="text-center">
           <h1 className="font-extrabold text-2xl mb-2">Reset Password</h1>
           <p className="text-sm text-gray-600">Enter your new password to reset old one</p>
@@ -32,10 +58,7 @@ const ResetPassword = () => {
                 <Button className="bg-teal-600 hover:bg-teal-500">Reset Password</Button>
             )
         }
-        <span className="text-center">
-            Back to{" "}
-            <Link to="/login" className="text-blue-500">Login</Link>
-        </span>
+
       </form>
     </div>
   );

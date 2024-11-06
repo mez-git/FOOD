@@ -37,12 +37,15 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import { Separator } from "./ui/separator";
+import { useUserStore } from "@/store/useUserStore";
+
 
 
 
 const Navbar = () => {
-  const loading = false;
- const admin=false
+  
+ 
+ const {user,logout,loading}=useUserStore()
   
 
   return (
@@ -57,7 +60,7 @@ const Navbar = () => {
             <Link to="/profile">Profile</Link>
             <Link to="/order/status">Order</Link>
 
-            { admin &&( 
+            { user?.admin &&( 
               <Menubar>
                 <MenubarMenu>
                   <MenubarTrigger>Dashboard</MenubarTrigger>
@@ -105,7 +108,7 @@ const Navbar = () => {
             </Link>
             <div>
               <Avatar>
-                <AvatarImage src="" alt="profilephoto" />
+                <AvatarImage src={user?.profilePicture} alt="profilephoto" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </div>
@@ -117,12 +120,14 @@ const Navbar = () => {
                 </Button>
               ) : (
                 <Button
-                
+                onClick={logout}
+
                   className="bg-teal-600 hover:bg-teal-500 rounded"
                 >
                   Logout
                 </Button>
               )}
+           
             </div>
           </div>
         </div>
@@ -138,8 +143,10 @@ const Navbar = () => {
 export default Navbar;
 
 const MobileNavbar = () => {
-  const loading = false;
+  
 
+
+ const {user,logout,loading}=useUserStore()
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -153,7 +160,7 @@ const MobileNavbar = () => {
       </SheetTrigger>
       <SheetContent className="flex flex-col">
         <SheetHeader className="flex flex-row items-center justify-between mt-2">
-          <SheetTitle>PatelEats</SheetTitle>
+          <SheetTitle>FOOD</SheetTitle>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">
@@ -191,7 +198,8 @@ const MobileNavbar = () => {
             <ShoppingCart />
             <span>Cart (0)</span>
           </Link>
-        
+          {user?.admin && (
+
             <>
               <Link
                 to="/admin/menu"
@@ -215,7 +223,7 @@ const MobileNavbar = () => {
                 <span>Restaurant Orders</span>
               </Link>
             </>
-        
+          )}
         </SheetDescription>
         <SheetFooter className="flex flex-col gap-4">
           <div className="flex flex-row items-center gap-2">
@@ -233,7 +241,8 @@ const MobileNavbar = () => {
               </Button>
             ) : (
               <Button
-                
+              onClick={logout}
+
                 className="bg-teal-600 hover:bg-teal-500 rounded"
               >
                 Logout

@@ -4,6 +4,7 @@ import { Button } from "../components/ui/button";
 import { Loader2 } from "lucide-react";
 import { RestaurantFormSchema, restaurantFromSchema } from "@/schema/restaurantSchema";
 import { useState,FormEvent } from "react";
+import { useRestaurantStore } from "@/store/useRestaurantStore";
 const Restaurant = () => {
     const[input,setInput]=useState<RestaurantFormSchema>({
         restaurantName:"",
@@ -13,6 +14,7 @@ const Restaurant = () => {
         cuisines:[],
         imageFile:undefined
     })
+    const {loading,createRestaurant}=useRestaurantStore()
     const [errors,setErrors]=useState<Partial<RestaurantFormSchema>>({})
     const changeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type } = e.target;
@@ -25,10 +27,30 @@ const Restaurant = () => {
         const fieldErrors=result.error.formErrors.fieldErrors;
         setErrors(fieldErrors as Partial<RestaurantFormSchema>)
     }
+    try {
+      const formData = new FormData();
+      formData.append("restaurantName", input.restaurantName);
+      formData.append("city", input.city);
+      formData.append("country", input.country);
+      formData.append("deliveryTime", input.deliveryTime.toString());
+      formData.append("cuisines", JSON.stringify(input.cuisines));
+
+      if (input.imageFile) {
+        formData.append("imageFile", input.imageFile);
+      }
+console.log(formData)
+    
+        // create
+        await createRestaurant(formData);
+      
+    } catch (error) {
+      console.log(error);
+    }
+
     }
     
     
-  const loading = false;
+  
   const restaurantExist = false;
   return (
     <div className="max-w-6xl mx-auto my-10">

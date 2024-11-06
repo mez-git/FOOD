@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MenuFormSchema, menuSchema } from "@/schema/menuSchema";
+import { MenuItem } from "../types/restaurantTypes";
 
 import { Loader2 } from "lucide-react";
 import {
@@ -25,10 +26,10 @@ const EditMenu = ({
   editOpen,
   setEditOpen,
 }: {
-  selectedMenu: any;
+  selectedMenu: MenuItem;
   editOpen: boolean;
   setEditOpen: Dispatch<SetStateAction<boolean>>;
-}) => {
+}):JSX.Element => {
   const [input, setInput] = useState<MenuFormSchema>({
     name: "",
     description: "",
@@ -36,7 +37,7 @@ const EditMenu = ({
     image: undefined,
   });
   const [error, setError] = useState<Partial<MenuFormSchema>>({});
-  const loading = false;
+  const loading = false
 
   const changeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
@@ -52,8 +53,8 @@ const EditMenu = ({
       return;
     }
      
-    // api ka kaam start from here
-
+    // api 
+    
   };
 
   useEffect(() => { 
@@ -120,12 +121,12 @@ const EditMenu = ({
           </div>
           <DialogFooter className="mt-5">
             {loading ? (
-              <Button disabled className="bg-teal-600 hover:bg-teal-500 rounded">
+              <Button disabled className="bg-teal-600 hover:bg-teal-500">
                 <Loader2 className="mr-2 w-4 h-4 animate-spin" />
                 Please wait
               </Button>
             ) : (
-              <Button className="bg-teal-600 hover:bg-teal-500 rounded">Submit</Button>
+              <Button className="bg-teal-600 hover:bg-teal-500">Submit</Button>
             )}
           </DialogFooter>
         </form>

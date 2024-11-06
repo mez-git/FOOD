@@ -2,11 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { LoginInputState, userLoginSchema } from "@/schema/userSchema";
+import { useUserStore } from "@/store/useUserStore";
 
 import { Loader2, LockKeyhole, Mail } from "lucide-react";
 import {ChangeEvent, useState,FormEvent } from "react";
 
-import  {Link} from "react-router-dom";
+import  {Link, useNavigate} from "react-router-dom";
 
 
 const Login = () => {
@@ -15,21 +16,38 @@ const Login = () => {
     password: "",
   });
   const [errors,setErrors]=useState<Partial<LoginInputState>>({})
+  const { login, loading } = useUserStore();
+const navigate=useNavigate()
+  // Log the current loading state
+  console.log("Loading state:", loading);
   const changeEventHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });
+    console.log("Input state after change:", input);
   };
 
-const loading=false
+
 const loginSubmitHandler = async (e: FormEvent) => {
   e.preventDefault()
   //form validation check
+  console.log("Input state before validation:", input);
   const result =userLoginSchema.safeParse(input)
 
  if (!result.success)
   { const fieldErrors=result.error.formErrors.fieldErrors
     setErrors(fieldErrors as Partial<LoginInputState>)}
  
+        // Log before calling signup API
+        console.log("Calling login API with input:", input);
+
+        
+        // Login API implementation start here
+        try {
+          await login(input);
+          navigate("/");
+        } catch (error) {console.log(error);
+        }
+      
 }
 
 
@@ -79,13 +97,13 @@ const loginSubmitHandler = async (e: FormEvent) => {
         </div>
         <div className="mb-10">
           {loading ? (
-            <Button disabled className="w-full  bg-teal-600  hover:bg-teal-500  ">
+            <Button disabled className="w-full  bg-teal-600  hover:bg-teal-500 rounded ">
               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
             </Button>
           ) : (
             <Button
               type="submit"
-              className="w-full  bg-teal-600  hover:bg-teal-500   "
+              className="w-full  bg-teal-600  hover:bg-teal-500 roundeds  "
             >
               Login
             </Button>
@@ -93,6 +111,7 @@ const loginSubmitHandler = async (e: FormEvent) => {
           <div className="mt-4">
             <Link
               to="/forgot-password"
+              
               className="hover:text-blue-500 hover:underline"
             >
               Forgot Password

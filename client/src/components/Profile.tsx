@@ -11,18 +11,21 @@ import {
   import { Input } from "./ui/input";
   import { Label } from "./ui/label";
   import { Button } from "./ui/button";
+import { useUserStore } from "@/store/useUserStore";
+import { useNavigate } from "react-router-dom";
   
   
   const Profile = () => {
-    
-    const isLoading = false;
+    const{user,updateProfile}=useUserStore()
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+const navigate=useNavigate()
     const [profileData, setProfileData] = useState({
-      fullname: "",
-      email:  "", 
-      address:  "",
-      city:  "",
-      country:  "",
-      profilePicture: "",
+      fullname: user?.fullname ||"",
+      email: user?.email || "", 
+      address:user?.address ||  "",
+      city: user?.city || "",
+      country:user?.country || "",
+      profilePicture:user?.profilePicture ||  "",
     });
     const imageRef = useRef<HTMLInputElement | null>(null);
     const [selectedProfilePicture, setSelectedProfilePicture] =
@@ -51,6 +54,14 @@ import {
   
     const updateProfileHandler = async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+      try {
+        setIsLoading(true)
+        await updateProfile(profileData)
+        setIsLoading(false)
+      } catch (error) {
+        setIsLoading(false)
+      }
+      navigate('/')
 
     };
   

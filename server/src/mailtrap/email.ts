@@ -68,3 +68,4 @@ export const sendResetSuccessEmail = async (email:string) => {
         throw new Error("Failed to send password reset success email");
     }
 }
+

@@ -31,8 +31,12 @@ export const signup = async (req: Request, res: Response) => {
             verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
         })
         generateToken(res,user);
-
-        await sendVerificationEmail(email, verificationToken);
+try {
+    await sendVerificationEmail(email, verificationToken);
+} catch (error) {
+    console.error("Email sending failed:", Error);
+}
+     
 
         const userWithoutPassword = await User.findOne({ email }).select("-password");
          res.status(201).json({
@@ -137,12 +141,13 @@ export const forgotPassword = async (req: Request, res: Response) => {
         const resetToken = crypto.randomBytes(40).toString('hex');
         const resetTokenExpiresAt = new Date(Date.now() + 1 * 60 * 60 * 1000); // 1 hour
 
+
         user.resetPasswordToken = resetToken;
         user.resetPasswordTokenExpiresAt = resetTokenExpiresAt;
         await user.save();
 
         // send email
-        await sendPasswordResetEmail(user.email, `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`);
+        await sendPasswordResetEmail(user.email, `${process.env.FRONTEND_URL}/reset-password/${resetToken}`);
 
          res.status(200).json({
             success: true,
@@ -155,9 +160,9 @@ export const forgotPassword = async (req: Request, res: Response) => {
 };
 export const resetPassword = async (req: Request, res: Response) => {
     try {
-        const { token } = req.params;
+        const { resetToken } = req.params;
         const { newPassword } = req.body;
-        const user = await User.findOne({ resetPasswordToken: token, resetPasswordTokenExpiresAt: { $gt: Date.now() } });
+        const user = await User.findOne({ resetPasswordToken: resetToken, resetPasswordTokenExpiresAt: { $gt: Date.now() } });
         if (!user) {
              res.status(400).json({
                 success: false,
@@ -224,3 +229,4 @@ export const updateProfile = async (req: Request, res: Response) => {
          res.status(500).json({ message: "Internal server error" });
     }
 }
+
