@@ -3,7 +3,7 @@ import { Label } from "../components/ui/label";
 import { Button } from "../components/ui/button";
 import { Loader2 } from "lucide-react";
 import { RestaurantFormSchema, restaurantFromSchema } from "@/schema/restaurantSchema";
-import { useState,FormEvent } from "react";
+import { useState,FormEvent, useEffect } from "react";
 import { useRestaurantStore } from "@/store/useRestaurantStore";
 const Restaurant = () => {
     const[input,setInput]=useState<RestaurantFormSchema>({
@@ -14,7 +14,14 @@ const Restaurant = () => {
         cuisines:[],
         imageFile:undefined
     })
-    const {loading,createRestaurant}=useRestaurantStore()
+    const {
+      loading,
+      restaurant,
+      updateRestaurant,
+      createRestaurant,
+      getRestaurant,
+    } = useRestaurantStore();
+  
     const [errors,setErrors]=useState<Partial<RestaurantFormSchema>>({})
     const changeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type } = e.target;
@@ -41,7 +48,13 @@ const Restaurant = () => {
 console.log(formData)
     
         // create
-        await createRestaurant(formData);
+        if (restaurant) {
+          // update
+          await updateRestaurant(formData);
+        } else {
+          // create
+          await createRestaurant(formData);
+        }  
       
     } catch (error) {
       console.log(error);
@@ -49,9 +62,29 @@ console.log(formData)
 
     }
     
+  useEffect(() => {
+    const fetchRestaurant = async () => {
+      await getRestaurant();
+      if(restaurant){
+        setInput({
+          restaurantName: restaurant.restaurantName || "",
+          city: restaurant.city || "",
+          country: restaurant.country || "",
+          deliveryTime: restaurant.deliveryTime || 0,
+          cuisines: restaurant.cuisines
+            ? restaurant.cuisines.map((cuisine: string) => cuisine)
+            : [],
+          imageFile: undefined,
+        });
+      };
+      }
+    fetchRestaurant();
+    console.log(restaurant);
+    
+  }, []);
     
   
-  const restaurantExist = false;
+  
   return (
     <div className="max-w-6xl mx-auto my-10">
       <div>
@@ -106,7 +139,7 @@ console.log(formData)
             <div>
               <Label>Delivery Time</Label>
               <Input
-                type="text"
+                type="number"
                 name="deliveryTime"
                 value={input.deliveryTime}
                 onChange={changeEventHandler}
@@ -166,7 +199,7 @@ console.log(formData)
               </Button>
             ) : (
               <Button className="bg-teal-600 hover:bg-teal-500 rounded">
-                {restaurantExist
+                {restaurant
                   ? "Upadate your restaurant details"
                   : "       Add your restaurant"}
               </Button>

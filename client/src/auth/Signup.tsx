@@ -51,7 +51,7 @@ const Signup = () => {
 
       console.log("Signup successful!");
 
-      navigate("/verify-email");
+      navigate("/login");
     } catch (error) {
       console.log("Signup error:", error);
     }

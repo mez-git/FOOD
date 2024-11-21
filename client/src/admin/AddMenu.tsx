@@ -14,7 +14,8 @@ import { Loader2, Plus } from "lucide-react";
 import React, { FormEvent, useState } from "react";
 import EditMenu from "./EditMenu";
 import { MenuFormSchema, menuSchema } from "@/schema/menuSchema";
-import HeroImage from "../assets/Paneer.jpeg"
+import { useMenuStore } from "@/store/useMenuStore";
+import { useRestaurantStore } from "@/store/useRestaurantStore";
  
 
 const AddMenu = () => {
@@ -28,8 +29,8 @@ const AddMenu = () => {
   const [editOpen, setEditOpen] = useState<boolean>(false);
   const [selectedMenu, setSelectedMenu] = useState<any>();
   const [error, setError] = useState<Partial<MenuFormSchema>>({});
-  const  loading= false
-
+  const { loading, createMenu } = useMenuStore();
+  const {singleRestaurant} = useRestaurantStore();
 
   const changeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
@@ -45,7 +46,19 @@ const AddMenu = () => {
       return;
     }
     // api ka kaam start from here
-  
+    try {
+      const formData = new FormData();
+      formData.append("name", input.name);
+      formData.append("description", input.description);
+      formData.append("price", input.price.toString());
+      if(input.image){
+        formData.append("image", input.image);
+      }
+      await createMenu(formData);
+    } catch (error) {
+      console.log(error);
+    }
+   
   };
   return (
     <div className="max-w-6xl mx-auto my-10">
@@ -55,7 +68,7 @@ const AddMenu = () => {
         </h1>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger>
-            <Button className="bg-orange hover:bg-hoverOrange">
+            <Button className="bg-teal-600 hover:bg-teal-500 rounded">
               <Plus className="mr-2" />
               Add Menus
             </Button>
@@ -133,12 +146,12 @@ const AddMenu = () => {
               </div>
               <DialogFooter className="mt-5">
                 {loading ? (
-                  <Button disabled className="bg-teal-600 hover:bg-teal-500 rounded">
+                  <Button disabled className="bg-teal-600 hover:bg-teal-500">
                     <Loader2 className="mr-2 w-4 h-4 animate-spin" />
                     Please wait
                   </Button>
                 ) : (
-                  <Button className="bg-teal-600 hover:bg-teal-500 rounded">
+                  <Button className="bg-teal-600 hover:bg-teal-500">
                     Submit
                   </Button>
                 )}
@@ -147,30 +160,30 @@ const AddMenu = () => {
           </DialogContent>
         </Dialog>
       </div>
-     {  ["biriyani","jalebi"].map((menu: string, idx: number) => (
+      {singleRestaurant?.menus!.map((menu: any, idx: number) => (
         <div key={idx} className="mt-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:space-x-4 md:p-4 p-2 shadow-md rounded-lg border">
             <img
-              src={HeroImage}
+              src={menu.image}
               alt=""
               className="md:h-24 md:w-24 h-16 w-full object-cover rounded-lg"
             />
             <div className="flex-1">
               <h1 className="text-lg font-semibold text-gray-800">
-                {menu}
+                {menu.name}
               </h1>
-              <p className="text-sm tex-gray-600 mt-1">something about the food ..description</p>
+              <p className="text-sm tex-gray-600 mt-1">{menu.description}</p>
               <h2 className="text-md font-semibold mt-2">
-                Price: <span className="text-[#D19254]">80</span>
+                Price: <span className="text-[#D19254]">{menu.price}</span>
               </h2>
             </div>
             <Button
               onClick={() => {
-                setSelectedMenu(menu)
+                setSelectedMenu(menu);
                 setEditOpen(true);
               }}
               size={"sm"}
-              className="bg-teal-600 hover:bg-teal-500 mt-2 rounded"
+              className="bg-teal-600 hover:bg-teal-500 mt-2"
             >
               Edit
             </Button>

@@ -2,8 +2,7 @@
 import Login from './auth/Login';
 import Signup from './auth/Signup';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
-import ForgotPassword from './auth/ForgotPassword';
-import ResetPassword from './auth/ResetPassword';
+
 
 import MainLayout from './layout/MainLayout';
 import HeroSection from './components/HeroSection';
@@ -15,24 +14,24 @@ import Cart from './components/Cart';
 import Restaurant from './admin/Restaurant';
 import AddMenu from './admin/AddMenu';
 
-import VerifyEmail from './auth/VerifyEmail';
+
 import Orders from './admin/Order';
 import EditMenu from './admin/EditMenu';
 
 import { useUserStore } from './store/useUserStore';
 import { useEffect } from 'react';
 import Loading from './components/Loading';
+import Success from './components/Success';
+import { useThemeStore } from './store/useThemeStore';
 
 
 
 const ProtectedRoute=({children}:{children:React.ReactNode})=>{
-  const {isAuthenticated,user}=useUserStore()
+  const {isAuthenticated}=useUserStore()
   if(!isAuthenticated){
     return <Navigate to="/login" replace/>
   }
-  if(!user?.isVerified){
-      return <Navigate to="/verify-email" replace/>
-  }
+
   return children
 }
 
@@ -71,7 +70,7 @@ const appRouter = createBrowserRouter([
         element: <SearchPage />
       },
       {
-        path: '/restaurant/:text',
+        path: '/restaurant/:id',
         element: <RestaurantDetail />
       },
       {
@@ -79,7 +78,10 @@ const appRouter = createBrowserRouter([
         element: <Cart />
       },
       
-   
+      {
+        path: "/order/status",
+        element: <Success />,
+      },
 
       // Admin service starts from here
       {
@@ -112,24 +114,18 @@ const appRouter = createBrowserRouter([
     path: '/signup',
     element: <AuthenticatedUser><Signup /></AuthenticatedUser> 
   },
-  {
-    path: '/forgot-password',
-    element: <ForgotPassword />
-  },
-  {
-    path: '/reset-password/:resetToken',
-    element: <ResetPassword />
-  },
-  {
-    path: "/verify-email",
-    element: <AuthenticatedUser><VerifyEmail /></AuthenticatedUser> ,
-  },
+
+  
+ 
+
 ]);
 
 function App() {
+  const initializeTheme = useThemeStore((state:any) => state.initializeTheme);
   const {checkAuthentication,isCheckingAuth}=useUserStore()
   useEffect(()=>{
     checkAuthentication()
+      initializeTheme();
   },[checkAuthentication])
   if(isCheckingAuth)return <Loading/>
   return (

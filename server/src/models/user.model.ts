@@ -58,18 +58,9 @@ const userSchema = new mongoose.Schema<IUserDocument>({
     },
     admin:{type:Boolean, default:false},
     // advanced authentication
-    lastLogin:{
-        type:Date,
-        default:Date.now
-    },
-    isVerified:{
-        type:Boolean,
-        default:false
-    },
-    resetPasswordToken:String,
-    resetPasswordTokenExpiresAt:Date,
-    verificationToken:String,
-    verificationTokenExpiresAt:Date,
+  
+    
+ 
 },{timestamps:true});
 
 export const User : Model<IUserDocument> = mongoose.model<IUserDocument>("User", userSchema);

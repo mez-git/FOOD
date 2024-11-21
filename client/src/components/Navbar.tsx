@@ -38,7 +38,8 @@ import {
 } from "./ui/sheet";
 import { Separator } from "./ui/separator";
 import { useUserStore } from "@/store/useUserStore";
-
+import { useCartStore } from "@/store/useCartStore";
+import { useThemeStore } from "@/store/useThemeStore";
 
 
 
@@ -46,7 +47,9 @@ const Navbar = () => {
   
  
  const {user,logout,loading}=useUserStore()
-  
+ const { cart } = useCartStore();
+ 
+
 
   return (
     <div className=" mx-auto bg-gray-200 m-2 w-full p-2 pt-0 mt-0">
@@ -80,21 +83,7 @@ const Navbar = () => {
 )}
           </div>
           <div className="flex items-center gap-4">
-            <div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                    <span className="sr-only">Toggle theme</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem >Light</DropdownMenuItem>
-                  <DropdownMenuItem >Dark</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+ 
             <Link to="/cart" className="relative cursor-pointer">
               <ShoppingCart />
             
@@ -102,7 +91,8 @@ const Navbar = () => {
                   size={"icon"}
                   className="absolute -inset-y-3 left-2 text-xs rounded-full w-4 h-4 bg-red-500 hover:bg-red-500"
                 >
-                  1
+                                    {cart.length}
+
                 </Button>
             
             </Link>
@@ -147,6 +137,8 @@ const MobileNavbar = () => {
 
 
  const {user,logout,loading}=useUserStore()
+ 
+ const { cart } = useCartStore();
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -161,19 +153,7 @@ const MobileNavbar = () => {
       <SheetContent className="flex flex-col">
         <SheetHeader className="flex flex-row items-center justify-between mt-2">
           <SheetTitle>FOOD</SheetTitle>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                <span className="sr-only">Toggle theme</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem >Light</DropdownMenuItem>
-              <DropdownMenuItem >Dark</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+     
         </SheetHeader>
         <Separator className="my-2" />
         <SheetDescription className="flex-1">
@@ -196,7 +176,7 @@ const MobileNavbar = () => {
             className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
           >
             <ShoppingCart />
-            <span>Cart (0)</span>
+            <span>Cart   {cart.length}</span>
           </Link>
           {user?.admin && (
 

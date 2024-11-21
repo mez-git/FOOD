@@ -163,10 +163,10 @@ export const searchRestaurant = async (req: Request, res: Response) => {
         }
         // console.log(query);
         // ["momos", "burger"]
-        if(selectedCuisines.length > 0){
-            query.cuisines = {$in:selectedCuisines}
-        }
-        
+       if (selectedCuisines.length > 0) {
+    query.cuisines = { $in: selectedCuisines.map(cuisine => new RegExp(cuisine, 'i')) };
+}
+        console.log("Selected Cuisines Array: ", selectedCuisines);
         const restaurants = await Restaurant.find(query);
          res.status(200).json({
             success:true,
