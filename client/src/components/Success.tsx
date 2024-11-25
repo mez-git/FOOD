@@ -1,4 +1,3 @@
-
 import { IndianRupee } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { Link } from "react-router-dom";
@@ -29,23 +28,23 @@ const Success = () => {
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
             Order Status:{" "}
-            <span className="text-[#FF5A5A]">{"confirm".toUpperCase()}</span>
+            <span className="text-[#FF5A5A]">{"CONFIRM"}</span>
           </h1>
         </div>
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">
             Order Summary
           </h2>
-          {/* Your Ordered Item Display here  */}
-          {orders.map((order:any, index:number) => (
+          {/* Order items */}
+          {orders.map((order: any, index: number) => (
             <div key={index}>
-              {order.cartItems.map((item:CartItem) => (
-                <div className="mb-4">
+              {order.cartItems.map((item: CartItem, itemIndex: number) => (
+                <div className="mb-4" key={itemIndex}>
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
                       <img
                         src={item.image}
-                        alt=""
+                        alt={item.name}
                         className="w-14 h-14 rounded-md object-cover"
                       />
                       <h3 className="ml-4 text-gray-800 dark:text-gray-200 font-medium">
@@ -55,7 +54,9 @@ const Success = () => {
                     <div className="text-right">
                       <div className="text-gray-800 dark:text-gray-200 flex items-center">
                         <IndianRupee />
-                        <span className="text-lg font-medium">{item.price}</span>
+                        <span className="text-lg font-medium">
+                          {item.price}
+                        </span>
                       </div>
                     </div>
                   </div>

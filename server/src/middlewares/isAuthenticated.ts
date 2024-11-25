@@ -17,25 +17,28 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
                 success: false,
                 message: "User not authenticated"
             });
-            return;
+            return; // This ensures no further code is executed after sending the response
         }
 
-        // Verify the token
-        const decoded = jwt.verify(token, process.env.SECRET_KEY as string) as jwt.JwtPayload;
+        const secretKey = process.env.SECRET_KEY;
+        if (!secretKey) {
+            throw new Error("Secret key is not defined in environment variables.");
+        }
 
-        // Check if decoding was successful
+        const decoded = jwt.verify(token, secretKey) as jwt.JwtPayload;
+
         if (!decoded || typeof decoded === 'string') {
             res.status(401).json({
                 success: false,
                 message: "Invalid token"
             });
-            return;
+            return; // Prevents further code execution
         }
 
-        // Assign the decoded user ID to req.id
         req.id = decoded.userId;
-        next();
+        next();  // Proceed to the next middleware if authenticated
     } catch (error) {
-        next(error);  // Pass error to Express error handler
+        console.error(error); // Optionally log the error for debugging purposes
+        next(error);  // Pass the error to Express error handler
     }
 };
